@@ -13,8 +13,10 @@ import { useRouter } from "next/navigation";
 import { createUser } from "@/lib/actions/patient.actions";
 import { FormFieldType } from "./PatientForm";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { GenderOptions } from "@/constants";
+import { Doctors, GenderOptions, IdentificationTypes } from "@/constants";
 import { Label } from "@/components/ui/label";
+import { SelectItem } from "../ui/select";
+import Image from "next/image";
 
 const RegisterForm = ({ user }: { user: User }) => {
   const router = useRouter();
@@ -55,20 +57,15 @@ const RegisterForm = ({ user }: { user: User }) => {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-12 flex-1"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 flex-1">
         <section className="space-y-4">
           <h1 className="header">Welcome 👋</h1>
           <p className="text-dark-700">Let us know more about yourself</p>
         </section>
 
-        <section className="space-y-6">
-          <div className="mb-9 space-y-1">
-            <h2 className="sub-header">Personal Information</h2>
-          </div>
-        </section>
+        <div className="py-6">
+          <h2 className="sub-header">Personal Information</h2>
+        </div>
 
         <CustomFormField
           fieldType={FormFieldType.INPUT}
@@ -133,6 +130,149 @@ const RegisterForm = ({ user }: { user: User }) => {
             )}
           />
         </div>
+
+        <div className="flex flex-col gap-6 xl:flex-row">
+          <CustomFormField
+            fieldType={FormFieldType.INPUT}
+            control={form.control}
+            name="address"
+            label="Address"
+            placeholder="14th Street, New York"
+          />
+          <CustomFormField
+            fieldType={FormFieldType.INPUT}
+            control={form.control}
+            name="occupation"
+            label="Occupation"
+            placeholder="Software Engineer"
+          />
+        </div>
+
+        <div className="flex flex-col gap-6 xl:flex-row">
+          <CustomFormField
+            fieldType={FormFieldType.INPUT}
+            control={form.control}
+            name="emergencyContactName"
+            label="Emergency contact name"
+            placeholder="Guardian's name"
+          />
+
+          <CustomFormField
+            fieldType={FormFieldType.PHONE_INPUT}
+            control={form.control}
+            name="emergencyContactNumber"
+            label="Emergency contact number"
+            placeholder="(555) 123-4567"
+          />
+        </div>
+
+        <div className="py-6">
+          <h2 className="sub-header">Medical Information</h2>
+        </div>
+
+        <CustomFormField
+          fieldType={FormFieldType.SELECT}
+          control={form.control}
+          name="primaryPhysician"
+          label="Primary Physician"
+          placeholder="Select a physician"
+        >
+          {Doctors.map((doctor) => {
+            return (
+              <SelectItem key={doctor.name} value={doctor.name}>
+                <div className="flex cursor-pointer items-center gap-2">
+                  <Image
+                    src={doctor.image}
+                    width={32}
+                    height={32}
+                    alt={doctor.name}
+                    className="rounded-full border border-dark-500"
+                  />
+                  <p>{doctor.name}</p>
+                </div>
+              </SelectItem>
+            );
+          })}
+        </CustomFormField>
+
+        <div className="flex flex-col gap-6 xl:flex-row">
+          <CustomFormField
+            fieldType={FormFieldType.INPUT}
+            control={form.control}
+            name="insuranceProvider"
+            label="Insurance Provider"
+            placeholder="BlueCross BlueShield"
+          />
+          <CustomFormField
+            fieldType={FormFieldType.INPUT}
+            control={form.control}
+            name="insurancePolicyNumber"
+            label="Insurance Policy Number"
+            placeholder="ABC123456789"
+          />
+        </div>
+
+        <div className="flex flex-col gap-6 xl:flex-row">
+          <CustomFormField
+            fieldType={FormFieldType.TEXTAREA}
+            control={form.control}
+            name="allergies"
+            label="Allergies (if any)"
+            placeholder="Peanuts, flour, pollen"
+          />
+          <CustomFormField
+            fieldType={FormFieldType.TEXTAREA}
+            control={form.control}
+            name="currentMedication"
+            label="Current Medication (if any)"
+            placeholder="Paracetamol 500mg"
+          />
+        </div>
+
+        <div className="flex flex-col gap-6 xl:flex-row">
+          <CustomFormField
+            fieldType={FormFieldType.TEXTAREA}
+            control={form.control}
+            name="familyMedicalHistory"
+            label="Family Medical History"
+            placeholder="diabetes in grandmother"
+          />
+          <CustomFormField
+            fieldType={FormFieldType.TEXTAREA}
+            control={form.control}
+            name="pastMedicalHistory"
+            label="Past Medical History"
+            placeholder="diabets"
+          />
+        </div>
+
+        <div className="py-6">
+          <h2 className="sub-header">Identification & Verification</h2>
+        </div>
+
+        <CustomFormField
+          fieldType={FormFieldType.SELECT}
+          control={form.control}
+          name="identificationType"
+          label="Identification Type"
+          placeholder="Select an identification type"
+        >
+          {IdentificationTypes.map((type) => {
+            return (
+              <SelectItem key={type} value={type}>
+                {type}
+              </SelectItem>
+            );
+          })}
+        </CustomFormField>
+
+        <CustomFormField
+          fieldType={FormFieldType.INPUT}
+          control={form.control}
+          name="identificationNumber"
+          label="Identification Number"
+          placeholder="123456789"
+        />
 
         <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
       </form>
