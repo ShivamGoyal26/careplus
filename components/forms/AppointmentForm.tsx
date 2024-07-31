@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -16,14 +16,23 @@ import { FormFieldType } from "./PatientForm";
 import { Doctors } from "@/constants";
 import { SelectItem } from "../ui/select";
 import { createAppointment } from "@/lib/actions/appointment.actions";
+import { Appointment } from "@/types/appwrite.types";
 
 type AppointmentFormProps = {
-  type: "create" | "cancel" | "schedule";
   userId: string;
   patientId: string;
+  type: "create" | "schedule" | "cancel";
+  appointment?: Appointment;
+  setOpen?: Dispatch<SetStateAction<boolean>>;
 };
 
-const AppointmentForm = ({ type, userId, patientId }: AppointmentFormProps) => {
+const AppointmentForm = ({
+  userId,
+  patientId,
+  type = "create",
+  appointment,
+  setOpen,
+}: AppointmentFormProps) => {
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -33,11 +42,13 @@ const AppointmentForm = ({ type, userId, patientId }: AppointmentFormProps) => {
   const form = useForm<z.infer<typeof AppointmentFormValidation>>({
     resolver: zodResolver(AppointmentFormValidation),
     defaultValues: {
-      primaryPhysician: "",
-      schedule: new Date(),
-      reason: "",
-      note: "",
-      cancellationReason: "",
+      primaryPhysician: appointment ? appointment?.primaryPhysician : "",
+      schedule: appointment
+        ? new Date(appointment?.schedule!)
+        : new Date(Date.now()),
+      reason: appointment ? appointment.reason : "",
+      note: appointment?.note || "",
+      cancellationReason: appointment?.cancellationReason || "",
     },
   });
 
