@@ -1,4 +1,5 @@
 import { Models } from "node-appwrite";
+import { Status } from ".";
 
 export type Patient = Models.Document & {
   userId: string;
